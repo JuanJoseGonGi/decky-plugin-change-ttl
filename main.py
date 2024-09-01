@@ -13,18 +13,13 @@ class Plugin:
             ipv6_ttl = int(ipv6_result.stdout.split('=')[1].strip())
 
             return {
-                "success": True,
-                "result": {
-                    "ipv4": ipv4_ttl,
-                    "ipv6": ipv6_ttl
-                }
+                "ipv4": ipv4_ttl,
+                "ipv6": ipv6_ttl
             }
         except Exception as e:
             decky_plugin.logger.error(f"Error getting TTL values: {str(e)}")
-            return {
-                "success": False,
-                "result": f"Failed to get TTL values: {str(e)}"
-            }
+            return f"Failed to get TTL values: {str(e)}"
+
 
     async def set(self, ttl):
         try:
@@ -33,16 +28,9 @@ class Plugin:
 
             # Set IPv6 TTL
             subprocess.run(['sysctl', '-w', f'net.ipv6.conf.all.hop_limit={ttl}'], check=True)
-
-            return {
-                "success": True
-            }
         except Exception as e:
             decky_plugin.logger.error(f"Error setting TTL value: {str(e)}")
-            return {
-                "success": False,
-                "result": f"Failed to set TTL value: {str(e)}"
-            }
+            return f"Failed to set TTL value: {str(e)}"
 
     # Asyncio-compatible long-running code, executed in a task when the plugin is loaded
     async def _main(self):
