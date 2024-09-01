@@ -1,10 +1,9 @@
 {
-  "name": "Example Plugin",
-  "author": "John Doe",
-  "flags": ["debug", "_root"],
+  "name": "Change TTL",
+  "author": "Juan José González Giraldo",
+  "flags": ["debug", "root"],
   "publish": {
-    "tags": ["template", "root"],
-    "description": "Decky example plugin.",
-    "image": "https://opengraph.githubassets.com/1/SteamDeckHomebrew/PluginLoader"
+    "tags": ["change-ttl", "root"],
+    "description": "Decky plugin to change default TTL on steam deck using sysctl."
   }
 }

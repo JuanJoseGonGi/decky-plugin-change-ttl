@@ -1,105 +1,107 @@
 import {
   ButtonItem,
   definePlugin,
-  DialogButton,
-  Menu,
-  MenuItem,
-  Navigation,
   PanelSection,
   PanelSectionRow,
   ServerAPI,
-  showContextMenu,
   staticClasses,
+  TextField,
+  showModal,
+  ConfirmModal,
 } from "decky-frontend-lib";
-import { VFC } from "react";
-import { FaShip } from "react-icons/fa";
+import { VFC, useState, useEffect } from "react";
+import { FaClock } from "react-icons/fa";
 
-import logo from "../assets/logo.png";
+interface TTLValues {
+  ipv4: number;
+  ipv6: number;
+}
 
-// interface AddMethodArgs {
-//   left: number;
-//   right: number;
-// }
+const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
+  const [ttlValues, setTtlValues] = useState<TTLValues>({ ipv4: 0, ipv6: 0 });
+  const [newTTL, setNewTTL] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
-const Content: VFC<{ serverAPI: ServerAPI }> = ({serverAPI}) => {
-  // const [result, setResult] = useState<number | undefined>();
+  const fetchTTLValues = async () => {
+    const result = await serverAPI.callPluginMethod<{}, TTLValues>("get", {});
+    if (result.success) {
+      setTtlValues(result.result);
+      setError(null);
+    } else {
+      setError(result.result);
+    }
+  };
 
-  // const onClick = async () => {
-  //   const result = await serverAPI.callPluginMethod<AddMethodArgs, number>(
-  //     "add",
-  //     {
-  //       left: 2,
-  //       right: 2,
-  //     }
-  //   );
-  //   if (result.success) {
-  //     setResult(result.result);
-  //   }
-  // };
+  useEffect(() => {
+    fetchTTLValues();
+  }, []);
+
+  const handleSetTTL = async () => {
+    const ttl = parseInt(newTTL);
+    if (isNaN(ttl) || ttl < 1 || ttl > 255) {
+      setError("Invalid TTL value. Please enter a number between 1 and 255.");
+      return;
+    }
+
+    const result = await serverAPI.callPluginMethod<{ ttl: number }, void>("set", { ttl });
+    if (result.success) {
+      fetchTTLValues();
+      setNewTTL("");
+      setError(null);
+      showModal(
+        <ConfirmModal
+          strTitle="Success"
+          strDescription="TTL value has been updated successfully."
+          strOKButtonText="OK"
+        />
+      );
+    } else {
+      setError(result.result);
+    }
+  };
+
+  const handleTTLChange = (value: string) => {
+    // Only allow numeric input
+    if (/^\d*$/.test(value)) {
+      setNewTTL(value);
+      // Clear error when user starts typing
+      if (error) setError(null);
+    }
+  };
 
   return (
-    <PanelSection title="Panel Section">
+    <PanelSection title="Change TTL">
       <PanelSectionRow>
-        <ButtonItem
-          layout="below"
-          onClick={(e) =>
-            showContextMenu(
-              <Menu label="Menu" cancelText="CAAAANCEL" onCancel={() => {}}>
-                <MenuItem onSelected={() => {}}>Item #1</MenuItem>
-                <MenuItem onSelected={() => {}}>Item #2</MenuItem>
-                <MenuItem onSelected={() => {}}>Item #3</MenuItem>
-              </Menu>,
-              e.currentTarget ?? window
-            )
-          }
-        >
-          Server says yolo
+        <div>Current IPv4 TTL: {ttlValues.ipv4}</div>
+      </PanelSectionRow>
+      <PanelSectionRow>
+        <div>Current IPv6 TTL: {ttlValues.ipv6}</div>
+      </PanelSectionRow>
+      <PanelSectionRow>
+        <TextField
+          label="New TTL Value (1-255)"
+          value={newTTL}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTTLChange(e.target.value)}
+        />
+      </PanelSectionRow>
+      <PanelSectionRow>
+        <ButtonItem layout="below" onClick={handleSetTTL}>
+          Set New TTL
         </ButtonItem>
       </PanelSectionRow>
-
-      <PanelSectionRow>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <img src={logo} />
-        </div>
-      </PanelSectionRow>
-
-      <PanelSectionRow>
-        <ButtonItem
-          layout="below"
-          onClick={() => {
-            Navigation.CloseSideMenus();
-            Navigation.Navigate("/decky-plugin-test");
-          }}
-        >
-          Router
-        </ButtonItem>
-      </PanelSectionRow>
+      {error && (
+        <PanelSectionRow>
+          <div style={{ color: 'red' }}>{error}</div>
+        </PanelSectionRow>
+      )}
     </PanelSection>
   );
 };
 
-const DeckyPluginRouterTest: VFC = () => {
-  return (
-    <div style={{ marginTop: "50px", color: "white" }}>
-      Hello World!
-      <DialogButton onClick={() => Navigation.NavigateToLibraryTab()}>
-        Go to Library
-      </DialogButton>
-    </div>
-  );
-};
-
 export default definePlugin((serverApi: ServerAPI) => {
-  serverApi.routerHook.addRoute("/decky-plugin-test", DeckyPluginRouterTest, {
-    exact: true,
-  });
-
   return {
-    title: <div className={staticClasses.Title}>Example Plugin</div>,
+    title: <div className={staticClasses.Title}>Change TTL</div>,
     content: <Content serverAPI={serverApi} />,
-    icon: <FaShip />,
-    onDismount() {
-      serverApi.routerHook.removeRoute("/decky-plugin-test");
-    },
+    icon: <FaClock />,
   };
 });

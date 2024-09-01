@@ -1,7 +1,7 @@
 {
-  "name": "decky-plugin-template",
-  "version": "0.0.1",
-  "description": "A template to quickly create decky plugins from scratch, based on TypeScript and webpack",
+  "name": "change-ttl",
+  "version": "1.0.0",
+  "description": "A decky plugin to change default ttl on steam deck using sysctl.",
   "scripts": {
     "build": "shx rm -rf dist && rollup -c",
     "watch": "rollup -c -w",
@@ -9,21 +9,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SteamDeckHomebrew/decky-plugin-template.git"
+    "url": "git+https://github.com/JuanJoseGonGi/decky-plugin-change-ttl.git"
   },
   "keywords": [
     "decky",
     "plugin",
-    "plugin-template",
+    "plugin-change-ttl",
     "steam-deck",
     "deck"
   ],
-  "author": "Jonas Dellinger <jonas@dellinger.dev>",
-  "license": "BSD-3-Clause",
-  "bugs": {
-    "url": "https://github.com/SteamDeckHomebrew/decky-plugin-template/issues"
-  },
-  "homepage": "https://github.com/SteamDeckHomebrew/decky-plugin-template#readme",
+  "author": "Juan José González Giraldo <juanjose.eng@gmail.com>",
+  "homepage": "https://github.com/JuanJoseGonGi/decky-plugin-change-ttl#readme",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.1.0",
     "@rollup/plugin-json": "^4.1.0",
