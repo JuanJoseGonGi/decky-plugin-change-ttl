@@ -1,7 +1,7 @@
 {
   "name": "Change TTL",
   "author": "Juan José González Giraldo",
-  "flags": ["debug", "root"],
+  "flags": ["root"],
   "publish": {
     "tags": ["change-ttl", "root"],
     "description": "Decky plugin to change default TTL on steam deck using sysctl."
