@@ -19,7 +19,7 @@ interface TTLValues {
 
 const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
     const [ttlValues, setTtlValues] = useState<TTLValues>({ ipv4: 0, ipv6: 0 });
-    const [newTTL, setNewTTL] = useState<number>(-1);
+    const [newTTL, setNewTTL] = useState<number>(64);
     const [error, setError] = useState<string | null>(null);
 
     const fetchTTLValues = async () => {
@@ -46,7 +46,6 @@ const Content: VFC<{ serverAPI: ServerAPI }> = ({ serverAPI }) => {
         const result = await serverAPI.callPluginMethod<{ ttl: number }, void>("set", { ttl });
         if (result.success) {
             fetchTTLValues();
-            setNewTTL(-1);
             setError(null);
             showModal(
                 <ConfirmModal
