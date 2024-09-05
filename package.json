@@ -1,6 +1,6 @@
 {
   "name": "change-ttl",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A decky plugin to change default ttl on steam deck using sysctl.",
   "scripts": {
     "build": "shx rm -rf dist && rollup -c",
